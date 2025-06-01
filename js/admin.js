@@ -57,3 +57,46 @@ checkLoginStatus();
         alert("Error during sign out: " + error.message);
     });
   }
+
+document.getElementById("addForm").addEventListener("submit", add);
+
+function add(e) {
+    e.preventDefault();
+    const name = document.getElementById("productName").value;
+    const about = document.getElementById("productAbout").value;
+    const image = document.getElementById("imgLink").value;
+    const platforms = document.getElementById("productPlatforms").value;
+    const website = document.getElementById("productWebsite").value;
+    const ageRating = document.getElementById("productAgeRating").value;
+    const metaScore = document.getElementById("productMetaScore").value;
+    const genres = document.getElementById("productGenres").value;
+    const releaseDate = document.getElementById("productReleaseDate").value;
+    const developers = document.getElementById("productDevelopers").value;
+    const publishers = document.getElementById("productPublishers").value;
+    const tags = document.getElementById("productTags").value;
+    const systemRequirements = document.getElementById("productSystemRequirements").value;
+    db.collection("products").add({ 
+        name: name,
+        about: about,
+        image: image,
+        platforms: platforms,
+        website: website,
+        ageRating: ageRating,
+        metaScore: metaScore,
+        genres: genres,
+        releaseDate: releaseDate,
+        developers: developers,
+        publishers: publishers,
+        tags: tags,
+        systemRequirements: systemRequirements
+    })
+    .then(() => {
+        console.log("Document successfully written!");
+        alert("Product added successfully!");
+        document.getElementById("addForm").reset();
+    })
+    .catch((error) => {
+        console.error("Error writing document: ", error);
+        alert("Error adding product: " + error.message);
+    })
+}

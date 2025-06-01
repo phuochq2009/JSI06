@@ -33,9 +33,17 @@ function login(event) {
     firebase.auth().signInWithEmailAndPassword(emailData, passwordData)
         .then(userCredential => {
             alert("Log In Successfully, Welcome: " + userCredential.user.email);
-            setTimeout(() => {
-                location.href = "index.html";
+            if (userCredential.user.email === "admin2k9@gmail.com") {
+                setTimeout(() => {
+                location.href = "admin.html";
             }, 2000);
+            }
+            else {
+                setTimeout(() => {
+                    location.href = "index.html";
+                }, 2000);
+            }
+            
         })
             .catch(error => {
             if (error.code === "auth/user-not-found") {

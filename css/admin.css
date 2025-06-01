@@ -25,7 +25,8 @@ body {
 
 
 .contain {
-    max-width: 600px;
+    max-width: 90vw;
+    width: 100%;
     background-color: #333;
     padding: 20px;
     border-radius: 8px;
@@ -35,6 +36,41 @@ body {
     margin-right: auto;
 }
 
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+    color: #fff;
+}
+
+.form-label {
+    font-weight: bold;
+    color: #fff;
+}
+
+.form-control {
+    background-color: #444;
+    color: #fff;
+    border: 1px solid #555;
+}
+
+.form-control:focus {
+    background-color: #555;
+    color: #fff;
+    border-color: #777;
+}
+
+.btn-primary {
+    width: 100%;
+    padding: 10px;
+    font-size: 16px;
+    background-color: #007bff;
+    border: none;
+    margin-bottom: 15px;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+}
 
 .link-text{
     color: #fff;
@@ -63,3 +99,4 @@ body {
 .dropdown p{
     margin:0;
 }
+
