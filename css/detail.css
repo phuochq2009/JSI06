@@ -1,0 +1,225 @@
+body {
+    font-family: Arial, sans-serif;
+    background-color: #1a1a1a;
+    color: white;
+    margin: 0;
+    padding: 0;
+}
+
+.container {
+    width: 100%;
+    margin: 50px auto;
+    padding: 20px;
+    background-color: #222;
+    border-radius: 10px;
+    position: relative;
+}
+
+.row-main {
+    margin: 0 10%;
+}
+
+.game-detail {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    
+}
+
+.game-detail img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.game-detail h1 {
+    margin: 20px 0;
+    font-size: 36px;
+}
+
+.game-detail p {
+    font-size: 18px;
+    line-height: 1.6;
+    color: #ccc;
+}
+
+.carousel {
+    display: flex;
+    overflow: hidden;
+    width: 100%;
+    max-width: 600px;
+    position: relative;
+}
+
+.carousel-inner {
+    display: flex;
+    transition: transform 0.5s ease-in-out;
+}
+
+.carousel-item {
+    min-width: 100%;
+    box-sizing: border-box;
+    text-align: center;
+    background-color: #222;
+    padding: 10px;
+    border-radius: 10px;
+    display: none; /* Hide all slides by default */
+}
+
+.carousel-item.active {
+    display: block; /* Show the active slide */
+}
+
+.carousel img {
+    width: 100%;
+    max-width: 600px;
+    border-radius: 10px;
+}
+
+.details {
+    text-align: left;
+    width: 100%;
+}
+
+.details h2 {
+    margin: 10px 0;
+    font-size: 24px;
+}
+
+.details p {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #ccc;
+}
+
+.details ul {
+    list-style: none;
+    padding: 0;
+}
+
+.details ul li {
+    margin: 5px 0;
+    font-size: 16px;
+    color: #ccc;
+}
+
+.details a {
+    color: #1e90ff;
+    text-decoration: none;
+}
+
+.details a:hover {
+    text-decoration: underline;
+}
+
+.first-detail h4{
+    color: hsla(0, 0%, 100%, .2);
+}
+.link{
+    text-decoration: none;
+    color: white;
+}
+
+.btn-link{
+    background-color: hsla(0, 0%, 100%, .2);
+    color: hsla(0, 0%, 100%, 0.525);
+    width: 100%;
+    padding: 10px 0px;
+    border-radius: 9px;
+    text-align: center;
+
+}
+
+.btn-link-container{
+    display: flex;
+    justify-content: center;
+    margin-top: 15px;
+}
+
+.btn-link:hover{
+    background-color: hsl(0, 0%, 0%);
+    color: white;
+    transition: 0.5s;
+}
+
+.game-header{
+    font-size: 50px;
+    font-weight: 700;
+}
+
+.logo{
+    width: 65px;
+    height: 60px;
+}
+
+.logo-link{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+}
+
+.text-white{
+    text-decoration: none;
+}
+
+.carousel-button {
+    background-color: rgba(0, 0, 0, 0.5);
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 24px;
+    cursor: pointer;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    z-index: 1;
+}
+
+.carousel-button.prev {
+    left: 0; 
+}
+
+.carousel-button.next {
+    right: 0; 
+}
+
+.carousel-button:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.first-detail p{
+    font-size: 90%;
+}
+
+.drop-content{
+    display: none;
+    position: absolute;
+    top: 140%;
+    right: -100%;
+    color: #fff;
+    background-color: #444;
+    min-width: 100px;
+    box-shadow: 0 8px 16px 0 rgba(0,0,0,0.2);
+    z-index: 1; 
+    font-family: Arial, sans-serif;
+}
+
+.dropdown:hover .drop-content{
+    display: block;
+}
+.dropdown p i{
+    position: relative;
+}
+
+.dropdown p{
+    margin:0;
+}
+
+.wishlist-button{
+    margin-bottom: 15px;
+}
+
+.wishlist-button:hover{
+    cursor: pointer;
+}
