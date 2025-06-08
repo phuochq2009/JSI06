@@ -100,3 +100,39 @@ h2 {
     margin:0;
 }
 
+
+.result-img{
+    width: 260px; 
+    height: 160px; 
+    object-fit: cover; 
+    margin-right: 20px; 
+}
+
+.result-game{
+    background-color: #2b2f35;
+    box-shadow: 0 0 16px 0px rgba(0, 0, 0, .45);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    padding-bottom: 10px;
+    
+}
+
+.result-text{
+    text-decoration: none;
+    color: white;
+    
+}
+
+.left{
+    width:120%;
+}
+
+.hide{
+    display: none;
+}
+
+.result{
+    margin-bottom: 0.5%;
+    display: flex;
+}

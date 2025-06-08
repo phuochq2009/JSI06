@@ -64,7 +64,7 @@
       </div>
     </nav>
 
-    <div class="contain mt-5">
+    <div class="contain mt-5" id="addsForm">
       <h2>Manage product</h2>
       <form id="addForm">
 
@@ -139,6 +139,88 @@
         </button>
       </form>
       
+    </div>
+
+    <div class="contain mt-5 hide" id="editsForm">
+      <h2>Edit product</h2>
+      <form id="editForm">
+        <div id="productId" class=""></div>
+        <div class="row">
+          <div class="mb-3 col-4">
+            <label class="form-label">Product name</label>
+            <input type="text" class="form-control" id="productNameEdit" required />
+          </div>
+          <div class="mb-3 col-8">
+            <label class="form-label">Image link</label>
+            <input type="text" class="form-control" id="imgLinkEdit" required />
+          </div>
+        </div>
+        
+        <div class="mb-3">
+          <label class="form-label">About</label>
+          <textarea class="form-control" rows="4" cols="50" id="productAboutEdit"></textarea> 
+        </div>
+
+        <div class="row">
+          <div class="mb-3 col-7">
+            <label class="form-label">Platforms</label>
+            <input type="text" class="form-control" id="productPlatformsEdit" required />
+          </div>
+          <div class="mb-3 col-3">
+            <label class="form-label">Website</label>
+            <input type="text" class="form-control" id="productWebsiteEdit" required />
+          </div>
+          <div class="mb-3 col-2">
+            <label class="form-label">Age rating</label>
+            <input type="text" class="form-control" id="productAgeRatingEdit" required />
+          </div>
+        </div>
+
+
+        <div class="row">
+          <div class="mb-3 col-1">
+            <label class="form-label">Metascore</label>
+            <input type="number" class="form-control" id="productMetaScoreEdit" required />
+          </div>
+          <div class="mb-3 col-3">
+            <label class="form-label">Genres</label>
+            <input type="text" class="form-control" id="productGenresEdit" required />
+          </div>
+          <div class="mb-3 col-2">
+            <label class="form-label">Release date</label>
+            <input type="date" class="form-control" id="productReleaseDateEdit" required />
+          </div>
+          <div class="mb-3 col-3">
+            <label class="form-label">Developers</label>
+            <input type="text" class="form-control" id="productDevelopersEdit" required />
+          </div>
+          <div class="mb-3 col-3">
+            <label class="form-label">Publishers</label>
+            <input type="text" class="form-control" id="productPublishersEdit" required />
+          </div>
+          
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">Tags</label>
+          <textarea class="form-control" rows="1" cols="50" id="productTagsEdit"></textarea> 
+        </div>
+
+        <div class="mb-3">
+          <label class="form-label">System Requirement</label>
+          <textarea class="form-control" rows="4" cols="50" id="productSystemRequirementsEdit"></textarea> 
+        </div>
+        
+        <button type="submit" class="btn btn-primary">
+          Submit
+        </button>
+      </form>
+      
+    </div>
+
+    <div class="container mt-5">
+        <h2>Your Products</h2>
+        <div id="productContainer"></div> 
     </div>
 
     <footer class="bg-dark text-white mt-5 p-4 text-center">
