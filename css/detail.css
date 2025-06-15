@@ -223,3 +223,10 @@ body {
 .wishlist-button:hover{
     cursor: pointer;
 }
+
+.game-price-text{
+    color: #f0f0f0;
+    font-size: 30px;
+    font-weight: 700;
+    text-align: center;
+}

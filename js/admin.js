@@ -78,6 +78,7 @@ function add(e) {
   const developers = document.getElementById("productDevelopers").value;
   const publishers = document.getElementById("productPublishers").value;
   const tags = document.getElementById("productTags").value;
+  const price = document.getElementById("productPrice").value;
   const systemRequirements = document.getElementById(
     "productSystemRequirements"
   ).value;
@@ -95,6 +96,7 @@ function add(e) {
       developers: developers,
       publishers: publishers,
       tags: tags,
+      price: price,
       systemRequirements: systemRequirements,
     })
     .then(() => {
@@ -134,6 +136,9 @@ function displayProducts() {
                 <p>${game.releaseDate || ""}</p>
                 <button class="btn btn-danger btn-sm" onclick="deleteProduct('${doc.id}')">Delete</button>
                 <button class="btn btn-warning btn-sm" onclick="editProduct('${doc.id}')">Edit</button>
+              </div>
+              <div class="result-price">
+                <p>Price: $${game.price || "0.00"}</p>
               </div>
             </div>
           </div>
@@ -183,7 +188,7 @@ function editProduct(id) {
             document.getElementById("productPublishersEdit").value = game.publishers || "";
             document.getElementById("productTagsEdit").value = game.tags || "";
             document.getElementById("productSystemRequirementsEdit").value = game.systemRequirements || "";
-            
+            document.getElementById("productPriceEdit").value = game.price || "";
             
         } else {
             alert("No such product!");
@@ -210,6 +215,7 @@ function edit(e) {
   const developers = document.getElementById("productDevelopersEdit").value;
   const publishers = document.getElementById("productPublishersEdit").value;
   const tags = document.getElementById("productTagsEdit").value;
+  const price = document.getElementById("productPriceEdit").value;  
   const systemRequirements = document.getElementById(
     "productSystemRequirementsEdit"
   ).value;
@@ -230,6 +236,7 @@ function edit(e) {
       publishers: publishers,
       tags: tags,
       systemRequirements: systemRequirements,
+      price: price,
     })
     .then(() => {
       console.log("Document successfully updated!");

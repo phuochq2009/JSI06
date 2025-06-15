@@ -1,0 +1,174 @@
+const id = new URLSearchParams(window.location.search).get("id");
+function displayGameDetail(id) {
+  db.collection("products")
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (!doc.exists) {
+        document.getElementById("firstDetail").innerHTML = "<p>Game not found.</p>";
+        return;
+      }
+      const game = doc.data();
+      const firstDetail = document.getElementById("firstDetail");
+      firstDetail.innerHTML = `
+        <h2 class="game-header">${game.name}</h2>
+        <h3>About</h3>
+        ${game.about} 
+        <div class="row">
+            <div class="col-6">
+                <h4>Platforms</h4>
+                <p>${game.platforms}</p>
+            </div>
+            <div class="col-6">
+                <h4>Metascore</h4>
+                <p>${game.metaScore}</p>
+            </div>
+            <div class="col-6">
+                <h4>Genres</h4>
+                <p>${game.genres}</p>
+            </div>
+            <div class="col-6">
+                <h4>Release date</h4>
+                <p>${game.releaseDate}</p>
+            </div>
+            <div class="col-6">
+                <h4>Developer</h4>
+                <p>${game.developers}</p>
+            </div>
+            <div class="col-6">
+                <h4>Publisher</h4>
+                <p>${game.publishers}</p>
+            </div>
+            <div class="col-6">
+                <h4>Age rating</h4>
+                <p>${game.ageRating}</p>
+            </div>
+            <div class="col-12">
+                <h4>Tags</h4>
+                <p>${game.tags}</p>
+            </div>
+            <div class="col-12">
+                <h4>Website</h4>
+                <p><a target="blank" class="link" href="${game.website}">${game.website}</a></p>
+            </div>
+        </div>
+        <h3>System Requirements</h3>
+        <h4>Minimum</h4>
+        <p>${game.systemRequirements}</p>
+      `;
+      const secondDetail = document.getElementById("secondDetail");
+      secondDetail.innerHTML = `    
+        <div class="game-price">
+            <p class="game-price-text">Price: $${game.price}</p>
+        </div>
+        <div class="btn-link link wishlist-button" onclick="addCart()">Add to shopping cart</div>
+      `;
+      const gameDetail = document.getElementById("gameDetail");
+      gameDetail.innerHTML = `
+        <img class="game-img" src="${game.image}" alt="Image not found">   
+      `;
+    })
+    .catch((error) => {
+      document.getElementById("firstDetail").innerHTML = "<p>Error loading game: " + error.message + "</p>";
+    });
+}
+
+displayGameDetail(id);
+
+
+
+
+function checkLoginStatus() {
+    const textt = document.getElementById('textt'); 
+    firebase.auth().onAuthStateChanged(function(user) {
+      
+        if (user) {
+            db.collection("users").where("email", "==", user.email)
+            .get()
+            .then((querySnapshot) => {
+              console.log("Query Snapshot:", querySnapshot);
+
+                if (!querySnapshot.empty) {
+                    const userData = querySnapshot.docs[0].data();
+                    
+                    textt.innerHTML = `
+                        <div class="dropdown">
+                            <p class="nav-link">
+                                ${userData.username} <i class="fa-solid fa-caret-down">
+                                    <button class="drop-content" onclick="logout()">Log Out</button>
+                                </i>
+                            </p>
+                        </div>
+                    `;
+                } else {
+                    textt.innerHTML = `
+                        <div class="dropdown">
+                            <p class="nav-link">
+                                ${user.email} <i class="fa-solid fa-caret-down">
+                                    <button class="drop-content" onclick="logout()">Log Out</button>
+                                </i>
+                            </p>
+                        </div>
+                    `;
+                }
+                console.log("User is signed in:", user.email);
+            })
+            .catch((error) => {
+                console.log("Error getting documents: ", error);
+                textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
+            });
+        } else {
+            textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
+            console.log("No user is signed in.");
+        }
+    });
+}
+
+checkLoginStatus();
+  
+  function logout() {
+    firebase.auth().signOut().then(() => {
+        // Sign-out successful.
+        console.log("Sign-out successful.");
+        alert("You have signed out successfully!");
+    }).catch((error) => {
+        // An error happened.
+        console.log("An error happened:", error);
+        alert("Error during sign out: " + error.message);
+    });
+  }
+
+
+
+function addCart() {
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            db.collection("users").where("email", "==", user.email)
+            .get()
+            .then((querySnapshot) => {
+                if (!querySnapshot.empty) {
+                    const userDocId = querySnapshot.docs[0].id;
+                    db.collection("users").doc(userDocId).update({
+                        cart: firebase.firestore.FieldValue.arrayUnion(id)
+                    })
+                    .then(() => {
+                        alert("Game added to cart successfully!");
+                    })
+                    .catch((error) => {
+                        console.error("Error adding game to cart: ", error);
+                        alert("Error adding game to cart: " + error.message);
+                    });
+                } else {
+                    alert("User not found in database.");
+                }
+            })
+            .catch((error) => {
+                console.error("Error finding user: ", error);
+                alert("Error finding user: " + error.message);
+            });
+        } else {
+            alert("Please login to add game to cart");
+            return;
+        }
+    });
+}
