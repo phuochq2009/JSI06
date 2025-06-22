@@ -119,3 +119,31 @@ function logout() {
       alert("Error during sign out: " + error.message);
     });
 }
+
+function add() {
+    const role = document.getElementById("role").value;
+    const name = document.getElementById("name").value;
+    const description = document.getElementById("description").value;
+    const phone = document.getElementById("phone").value;
+    const address = document.getElementById("address").value;
+    const db = firebase.firestore();
+    
+    firebase.auth().onAuthStateChanged(function(user) {
+        if (user) {
+            db.collection("user").add({
+                email: user.email,
+                role: role,
+                name: name,
+                description: description,
+                phone: phone,
+                address: address
+            }).then(() => {
+                display();
+            }).catch((error) => {
+                console.error("Error adding user information: ", error);
+            });
+        } else {
+            alert("Please log in to input your information.");
+        }
+    });
+}
