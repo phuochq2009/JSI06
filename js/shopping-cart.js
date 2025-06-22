@@ -56,7 +56,6 @@ function displayWishlist() {
                       `;
                         wishlistContainer.appendChild(gameElement);
                       }
-                      // Khi đã load hết game, hiển thị tổng giá và nút checkout
                       if (loaded === gamesIdList.length) {
                         const totalDiv = document.createElement("div");
                         totalDiv.className = "cart-total";
@@ -195,7 +194,6 @@ function checkOut() {
   });
 }
 
-document.addEventListener("DOMContentLoaded", displayWishlist);
 
 function checkLoginStatus() {
   const textt = document.getElementById("textt");
