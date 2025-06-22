@@ -29,15 +29,13 @@ function checkLoginStatus() {
           console.log("Error getting documents: ", error);
           textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
         });
-    }  else {
+    } else {
       textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
       console.log("No user is signed in.");
       location.href = "login.html";
     }
   });
 }
-
-
 
 checkLoginStatus();
 
@@ -98,7 +96,21 @@ function add(e) {
       console.log("Document successfully written!");
       alert("Product added successfully!");
       document.getElementById("addForm").reset();
-        displayProducts();
+      displayProducts();
+      db.collection("products")
+        .where("name", "==", name)
+        .get()
+        .then((querySnapshot) => {
+          if (querySnapshot.empty) {
+        console.log("No matching products found.");
+          } else {
+        querySnapshot.forEach((doc) => {
+          db.collection("history").doc("purchase data").update({
+            [name]: 0,
+          });
+        });
+          }
+        });
     })
     .catch((error) => {
       console.error("Error writing document: ", error);
@@ -107,30 +119,35 @@ function add(e) {
 }
 function displayProducts() {
   const productContainer = document.getElementById("productContainer");
-  productContainer.innerHTML = ""; 
+  productContainer.innerHTML = "";
   db.collection("products")
     .get()
     .then((querySnapshot) => {
       if (querySnapshot.empty) {
         productContainer.innerHTML = "<p>No products found!</p>";
         return;
-      }     
+      }
       querySnapshot.forEach((doc) => {
-        
         const game = doc.data();
         const gameElement = document.createElement("div");
         gameElement.innerHTML = ` 
           <div class="result">           
             <div class="result-game">
               <div>
-                <img class="result-img" src="${game.image || ""}" alt="Image not found">
+                <img class="result-img" src="${
+                  game.image || ""
+                }" alt="Image not found">
               </div>
               <div class="result-text">
                 <h3>${game.name || ""}</h3>
                 <p>Tags: ${game.tags || "No tags available"}</p>
                 <p>${game.releaseDate || ""}</p>
-                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${doc.id}')">Delete</button>
-                <button class="btn btn-warning btn-sm" onclick="editProduct('${doc.id}')">Edit</button>
+                <button class="btn btn-danger btn-sm" onclick="deleteProduct('${
+                  doc.id
+                }')">Delete</button>
+                <button class="btn btn-warning btn-sm" onclick="editProduct('${
+                  doc.id
+                }')">Edit</button>
               </div>
               <div class="result-price">
                 <p>Price: $${game.price || "0.00"}</p>
@@ -150,7 +167,9 @@ displayProducts();
 
 function deleteProduct(id) {
   if (confirm("Are you sure you want to delete this product?")) {
-    db.collection("products").doc(id).delete()
+    db.collection("products")
+      .doc(id)
+      .delete()
       .then(() => {
         alert("Product deleted!");
         displayProducts();
@@ -166,36 +185,47 @@ function order() {
 }
 
 function editProduct(id) {
-    const editsForm = document.getElementById("editsForm");
-    editsForm.classList.remove("hide")
-    const addsForm = document.getElementById("addsForm");
-    addsForm.classList.add("hide");
-    db.collection("products").doc(id).get().then((doc) => {
-        if (doc.exists) {
-            const game = doc.data();
-            document.getElementById("productId").innerHTML = id;
-            document.getElementById("productNameEdit").value = game.name || "";
-            document.getElementById("productAboutEdit").value = game.about || "";
-            document.getElementById("imgLinkEdit").value = game.image || "";
-            document.getElementById("productPlatformsEdit").value = game.platforms || "";
-            document.getElementById("productWebsiteEdit").value = game.website || "";
-            document.getElementById("productAgeRatingEdit").value = game.ageRating || "";
-            document.getElementById("productMetaScoreEdit").value = game.metaScore || "";
-            document.getElementById("productGenresEdit").value = game.genres || "";
-            document.getElementById("productReleaseDateEdit").value = game.releaseDate || "";
-            document.getElementById("productDevelopersEdit").value = game.developers || "";
-            document.getElementById("productPublishersEdit").value = game.publishers || "";
-            document.getElementById("productTagsEdit").value = game.tags || "";
-            document.getElementById("productSystemRequirementsEdit").value = game.systemRequirements || "";
-            document.getElementById("productPriceEdit").value = game.price || "";
-            
-        } else {
-            alert("No such product!");
-        }
-    }).catch((error) => {
-        console.error("Error getting document:", error);
-        alert("Error retrieving product: " + error.message);
+  const editsForm = document.getElementById("editsForm");
+  editsForm.classList.remove("hide");
+  const addsForm = document.getElementById("addsForm");
+  addsForm.classList.add("hide");
+  db.collection("products")
+    .doc(id)
+    .get()
+    .then((doc) => {
+      if (doc.exists) {
+        const game = doc.data();
+        document.getElementById("productId").innerHTML = id;
+        document.getElementById("productNameEdit").value = game.name || "";
+        document.getElementById("productAboutEdit").value = game.about || "";
+        document.getElementById("imgLinkEdit").value = game.image || "";
+        document.getElementById("productPlatformsEdit").value =
+          game.platforms || "";
+        document.getElementById("productWebsiteEdit").value =
+          game.website || "";
+        document.getElementById("productAgeRatingEdit").value =
+          game.ageRating || "";
+        document.getElementById("productMetaScoreEdit").value =
+          game.metaScore || "";
+        document.getElementById("productGenresEdit").value = game.genres || "";
+        document.getElementById("productReleaseDateEdit").value =
+          game.releaseDate || "";
+        document.getElementById("productDevelopersEdit").value =
+          game.developers || "";
+        document.getElementById("productPublishersEdit").value =
+          game.publishers || "";
+        document.getElementById("productTagsEdit").value = game.tags || "";
+        document.getElementById("productSystemRequirementsEdit").value =
+          game.systemRequirements || "";
+        document.getElementById("productPriceEdit").value = game.price || "";
+      } else {
+        alert("No such product!");
+      }
     })
+    .catch((error) => {
+      console.error("Error getting document:", error);
+      alert("Error retrieving product: " + error.message);
+    });
 }
 
 document.getElementById("editForm").addEventListener("submit", edit);
@@ -214,7 +244,7 @@ function edit(e) {
   const developers = document.getElementById("productDevelopersEdit").value;
   const publishers = document.getElementById("productPublishersEdit").value;
   const tags = document.getElementById("productTagsEdit").value;
-  const price = document.getElementById("productPriceEdit").value;  
+  const price = document.getElementById("productPriceEdit").value;
   const systemRequirements = document.getElementById(
     "productSystemRequirementsEdit"
   ).value;

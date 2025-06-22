@@ -61,6 +61,13 @@
         </div>
       </nav>
 
+          <button class="btn btn-secondary" onclick="admin()">Return to admin page</button>
+
+    <div class="container mt-5">
+        <h2>Charts</h2>
+        <canvas id="buyChartContainer" width="300" height="70"></canvas>
+    </div>
+
     <div class="container mt-5">
         <h2>Orders</h2>
         <div id="ordersContainer"></div>
@@ -107,6 +114,8 @@
         </div>
     </div>
 </footer>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/10.13.2/firebase-firestore-compat.js"></script>

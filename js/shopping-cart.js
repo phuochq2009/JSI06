@@ -161,9 +161,37 @@ function checkOut() {
                             cart: [],
                           })
                           .then(() => {
+                            gamesIdList.forEach((gameId) => {
+                              db.collection("products")
+                              .doc(gameId)
+                              .get()
+                              .then((doc) => {
+                                if (doc.exists) {
+                                const game = doc.data();
+                                const gName = game.name || "Unknown Game";
+                                const historyDocRef = db.collection("history").doc("purchase data");
+                                // Use transaction to safely increment the field
+                                db.runTransaction((transaction) => {
+                                  return transaction.get(historyDocRef).then((historyDoc) => {
+                                  const data = historyDoc.exists ? historyDoc.data() : {};
+                                  const currentCount = data[gName] || 0;
+                                  transaction.update(historyDocRef, {
+                                    [gName]: currentCount + 1
+                                  });
+                                  });
+                                }).catch((error) => {
+                                  console.error("Error updating purchase count: ", error);
+                                });
+                                }
+                              })
+                              .catch((error) => {
+                                console.error("Error fetching game data: ", error);
+                              });
+                            });
                             alert("Checkout successful! Your cart is now empty.");
                             displayWishlist();
                             displayHistory();
+                          
                           })
                           .catch((error) => {
                             console.error("Error during checkout: ", error);
