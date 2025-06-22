@@ -135,9 +135,18 @@ h2 {
 .result{
     margin-bottom: 0.5%;
     display: flex;
+    position: relative;
 }
+
 .result-price{
     color: #ff9800;
     font-weight: bold;
     font-size: 1.2em;
+    position: absolute;
+    right: 1%;
+    bottom: 30%;
+    
+}
+.result-game{
+    min-width: 100%;
 }

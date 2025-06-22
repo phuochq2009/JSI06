@@ -70,8 +70,17 @@ body {
     margin:0;
 }
 
+.result-game{
+    
+    position: relative;
+}
+
 .result-price{
     color: #ff9800;
     font-weight: bold;
     font-size: 1.2em;
+    position: absolute;
+    right: 1%;
+    bottom: 30%;
+    
 }

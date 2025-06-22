@@ -177,9 +177,7 @@ function logout() {
     });
 }
 
-function admin() {
-  location.href = "admin.html";
-}
+
 
 function dynamicColors() {
     var r = Math.floor(Math.random() * 255);

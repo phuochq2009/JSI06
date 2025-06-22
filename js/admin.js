@@ -180,9 +180,7 @@ function deleteProduct(id) {
   }
 }
 
-function order() {
-  location.href = "orders.html";
-}
+
 
 function editProduct(id) {
   const editsForm = document.getElementById("editsForm");
