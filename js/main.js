@@ -10,7 +10,7 @@ async function fetchGames(page = 1, pageSize = 20, totalPages = y) {
       let allGames = [];
       for (let i = 1; i <= totalPages; i++) {
           const response = await fetch(`${BASE_URL}&page=${i}&page_size=${pageSize}`);
-          const data = await response.json();
+          const data = await response.json();   
           allGames = allGames.concat(data.results);
       }
       displayGames(allGames);

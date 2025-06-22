@@ -136,14 +136,14 @@ function checkOut() {
                   alert("Your cart is empty. Please add items to your cart before checking out.");
                   return;
                 }
-                // Thêm vào lịch sử mua của user
+                // Thêm hitory
                 db.collection("users")
                   .doc(userDocId)
                   .update({
                     history: firebase.firestore.FieldValue.arrayUnion(...gamesIdList),
                   })
                   .then(() => {
-                    // Thêm vào orders (nếu chưa có, tạo mới)
+                    // Thêm orders 
                     db.collection("orders")
                       .doc(user.email)
                       .set(
@@ -155,7 +155,7 @@ function checkOut() {
                         { merge: true }
                       )
                       .then(() => {
-                        // Xóa cart sau khi checkout
+                        // Xóa cart 
                         db.collection("users")
                           .doc(userDocId)
                           .update({
@@ -164,6 +164,7 @@ function checkOut() {
                           .then(() => {
                             alert("Checkout successful! Your cart is now empty.");
                             displayWishlist();
+                            displayHistory();
                           })
                           .catch((error) => {
                             console.error("Error during checkout: ", error);
@@ -237,7 +238,80 @@ function checkLoginStatus() {
   });
 }
 
+function displayHistory() {
+  const historyContainer = document.getElementById("historyContainer");
+  historyContainer.innerHTML = "";
+
+  firebase.auth().onAuthStateChanged(function (user) {
+    if (user) {
+      db.collection("users")
+        .where("email", "==", user.email)
+        .get()
+        .then((querySnapshot) => {
+          if (!querySnapshot.empty) {
+            const userDocId = querySnapshot.docs[0].id;
+            db.collection("users")
+              .doc(userDocId)
+              .get()
+              .then((userDoc) => {
+                const userData = userDoc.data();
+                const historyList = userData.history || [];
+                if (historyList.length === 0) {
+                  historyContainer.innerHTML = "<p>You have not purchased any games yet.</p>";
+                  return;
+                }
+                historyList.forEach((gameId) => {
+                  db.collection("products").doc(gameId).get().then((doc) => {
+                    if (doc.exists) {
+                      const game = doc.data();
+                      const gameElement = document.createElement("div");
+                      gameElement.classList.add("history-game");
+                      gameElement.innerHTML = `
+                        <div class="result">
+                          <a class="left" href="./detail.html?id=${gameId}" target="_blank" style="text-decoration: none;">
+                            <div class="result-game">
+                              <div>
+                                <img class="result-img" src="${game.image || ""}" alt="Image not found">
+                              </div>
+                              <div class="result-text">
+                                <h3>${game.name}</h3>
+                                <p>Tags: ${game.tags || "No tags available"}</p>
+                                <p>${game.releaseDate || ""}</p>
+                              </div>
+                              <div class="result-price">
+                                <p>Price: $${game.price || "0.00"}</p>
+                              </div>
+                            </div>
+                          </a>
+                        </div>
+                      `;
+                      historyContainer.appendChild(gameElement);
+                    }
+                  });
+                });
+              });
+          } else {
+            historyContainer.innerHTML = "<p>User not found in database.</p>";
+          }
+        })
+        .catch((error) => {
+          historyContainer.innerHTML = "<p>Error: " + error.message + "</p>";
+        });
+    } else {
+      historyContainer.innerHTML = "<p>Please login to view your purchase history.</p>";
+    }
+  });
+}
+
+
+
+
+
 checkLoginStatus();
+displayHistory();
+displayWishlist();
+
+
 
 function logout() {
   firebase

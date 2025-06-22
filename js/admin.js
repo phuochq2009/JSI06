@@ -8,7 +8,7 @@ function checkLoginStatus() {
         .then((querySnapshot) => {
           console.log("Query Snapshot:", querySnapshot);
 
-          if (!querySnapshot.empty) {
+          if (user.email === "admin2k9@gmail.com") {
             const userData = querySnapshot.docs[0].data();
 
             textt.innerHTML = `
@@ -21,15 +21,7 @@ function checkLoginStatus() {
                         </div>
                     `;
           } else {
-            textt.innerHTML = `
-                        <div class="dropdown">
-                            <p class="nav-link">
-                                ${user.email} <i class="fa-solid fa-caret-down">
-                                    <button class="drop-content" onclick="logout()">Log Out</button>
-                                </i>
-                            </p>
-                        </div>
-                    `;
+            location.href = "index.html";
           }
           console.log("User is signed in:", user.email);
         })
@@ -37,12 +29,15 @@ function checkLoginStatus() {
           console.log("Error getting documents: ", error);
           textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
         });
-    } else {
+    }  else {
       textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
       console.log("No user is signed in.");
+      location.href = "login.html";
     }
   });
 }
+
+
 
 checkLoginStatus();
 
@@ -164,6 +159,10 @@ function deleteProduct(id) {
         alert("Error deleting product: " + error.message);
       });
   }
+}
+
+function order() {
+  location.href = "orders.html";
 }
 
 function editProduct(id) {
