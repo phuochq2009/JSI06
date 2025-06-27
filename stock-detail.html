@@ -78,6 +78,37 @@
         <div id="secondDetail"></div>
       </div>
     </div>
+
+    <div class="comment-container"> 
+      <h1>Comment</h1>
+      <form id="commentForm" class="comment-form">
+        <div class="mb-3">
+          <label for="comment" class="form-label"></label>
+          <textarea
+            class="form-control"
+            id="comment"
+            rows="3"
+            placeholder="Write your comment here"
+            required
+          ></textarea>
+        </div>
+        <div class="mb-3">
+          <div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="recommendation" id="recommended" value="recommended" required>
+              <label class="form-check-label" for="recommended"><i class='fas fa-thumbs-up'></i> Recommended</label>
+            </div>
+            <div class="form-check form-check-inline">
+              <input class="form-check-input" type="radio" name="recommendation" id="notRecommended" value="not_recommended" required>
+              <label class="form-check-label" for="notRecommended"><i class='fas fa-thumbs-down'></i> Not Recommended</label>
+            </div>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary">Submit</button>
+      </form>
+      <div id="commentsContainer"></div>
+    </div>
+
     <footer class="bg-dark text-white mt-5 p-4 text-center">
       <div class="containe">
         <div class="row">

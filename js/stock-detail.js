@@ -184,3 +184,96 @@ function addCart() {
         }
     });
 }
+document.getElementById("commentForm").addEventListener("submit", comment);
+
+    function comment(event) {
+        event.preventDefault();
+        const commentText = document.getElementById("comment").value;
+        const commendation = document.getElementsByName("recommendation");
+        let selectedCommendation = "";
+        for (const commend of commendation) {
+            if (commend.checked) {
+                selectedCommendation = commend.value;
+                break;
+            }
+            if (!selectedCommendation) {
+            alert("Please select a commendation.");
+            return;
+        }  
+        }
+        if (selectedCommendation === "recommended") {
+            selectedCommendation = "<i class='fas fa-thumbs-up'></i> Recommended";
+        } else if (selectedCommendation === "not-recommended") {
+            selectedCommendation = "<i class='fas fa-thumbs-down'></i> Not Recommended";
+        }                 
+        if (!commentText) {
+            alert("Please enter a comment.");
+            return;
+        }
+        firebase.auth().onAuthStateChanged(function(user) {
+            if (user) {
+                db.collection("users").where("email", "==", user.email)
+                .get()
+                .then((querySnapshot) => {
+                    if (!querySnapshot.empty) {
+                        const username = querySnapshot.docs[0].data().username;
+                        db.collection("comments").add({
+                            gameId: id,
+                            username: username,
+                            comment: commentText,
+                            commendation: selectedCommendation,
+                        })
+                        .then(() => {
+                            alert("Comment added successfully!");
+                            document.getElementById("comment").value = ""; 
+                            displayComments(); 
+                        })
+                        .catch((error) => {
+                            console.error("Error adding comment: ", error);
+                            alert("Error adding comment: " + error.message);
+                        });
+                    }
+                    else {
+                        alert("User not found in database.");
+                    }
+                })
+                .catch((error) => {
+                    console.error("Error finding user: ", error);
+                    alert("Error finding user: " + error.message);
+                });
+            } else {
+                alert("Please login to comment on this game.");
+                return;
+            }
+        })
+    }
+    function displayComments() {
+        db.collection("comments").where("gameId", "==", id).get()
+        .then((querySnapshot) => {
+            const commentsContainer = document.getElementById("commentsContainer");
+            commentsContainer.innerHTML = "";
+            if (querySnapshot.empty) {
+                commentsContainer.innerHTML = "<p>No comments yet.</p>";
+                return;
+            }
+            querySnapshot.forEach((doc) => {
+                const commentData = doc.data();
+                const commentsContainer = document.getElementById("commentsContainer");
+                commentsContainer.innerHTML += `
+                    <div class="comment">
+                        <h3 class="commendation">${commentData.commendation}</h3>
+                        <h3>by ${commentData.username}</h3>
+                        <p>${commentData.comment}</p>
+                    </div>
+                    `;
+            });
+        })
+        .catch((error) => {
+            console.error("Error fetching comments: ", error);
+            const commentsContainer = document.getElementById("commentsContainer");
+            commentsContainer.innerHTML = "<p>Error loading comments: " + error.message + "</p>";
+        });
+    }
+
+    displayComments();
+// function searchGames() {
