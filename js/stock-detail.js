@@ -251,37 +251,37 @@ document.getElementById("commentForm").addEventListener("submit", comment);
         })
     }
     function displayComments() {
-        db.collection("comments").where("gameId", "==", id).get()
-        .then((querySnapshot) => {
-            const commentsContainer = document.getElementById("commentsContainer");
-            commentsContainer.innerHTML = "";
-            if (querySnapshot.empty) {
-                commentsContainer.innerHTML = "<p>No comments yet.</p>";
-                return;
-            }
-            querySnapshot.forEach((doc) => {
-                const commentData = doc.data();
-                const commentsContainer = document.getElementById("commentsContainer");
-                commentsContainer.innerHTML += `
-                    <div class="comment">
-                        <h3 class="commendation">${commentData.commendation}</h3>
-                        <h3>by ${commentData.username}</h3>
-                        <p class="timestamp">"Comment in: "${
-                          commentData.timestamp && commentData.timestamp.toDate
-                            ? commentData.timestamp.toDate().toLocaleString()
-                            : "N/A"
-                        } </p>
-                        <p>${commentData.comment}</p>
-                    </div>
-                    `;
-            });
-        })
-        .catch((error) => {
-            console.error("Error fetching comments: ", error);
-            const commentsContainer = document.getElementById("commentsContainer");
-            commentsContainer.innerHTML = "<p>Error loading comments: " + error.message + "</p>";
+    db.collection("comments")
+      .where("gameId", "==", id)
+      .orderBy("timestamp", "desc") 
+      .get()
+      .then((querySnapshot) => {
+        const commentsContainer = document.getElementById("commentsContainer");
+        commentsContainer.innerHTML = "";
+        if (querySnapshot.empty) {
+            commentsContainer.innerHTML = "<p>No comments yet.</p>";
+            return;
+        }
+        querySnapshot.forEach((doc) => {
+            const commentData = doc.data();
+            commentsContainer.innerHTML += `
+                <div class="comment">
+                    <h3 class="commendation">${commentData.commendation}</h3>
+                    <h3>by ${commentData.username}</h3>
+                    <p class="timestamp">Comment in: ${
+                      commentData.timestamp && commentData.timestamp.toDate
+                        ? commentData.timestamp.toDate().toLocaleString()
+                        : "N/A"
+                    } </p>
+                    <p>${commentData.comment}</p>
+                </div>
+            `;
         });
-    }
-
+      })
+      .catch((error) => {
+        console.error("Error fetching comments: ", error);
+        const commentsContainer = document.getElementById("commentsContainer");
+        commentsContainer.innerHTML = "<p>Error loading comments: " + error.message + "</p>";
+      });
+}
     displayComments();
-// function searchGames() {
