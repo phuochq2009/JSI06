@@ -17,7 +17,7 @@ function displayWishlist() {
                 const userData = userDoc.data();
                 const gamesIdList = userData.cart || [];
                 if (gamesIdList.length === 0) {
-                  wishlistContainer.innerHTML = "<p>Your cart is empty.</p>";
+                  wishlistContainer.innerHTML = "<p>Your cart is empty.</p>"; 
                   return;
                 }
                 let totalPrice = 0;

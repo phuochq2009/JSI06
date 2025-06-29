@@ -87,7 +87,7 @@ body {
 .result{
     margin-bottom: 0.5%;
     display: flex;
-    position: relative;
+    
 }
 
 .result-price{
@@ -101,4 +101,5 @@ body {
 }
 .result-game{
     min-width: 100%;
+    position: relative;
 }

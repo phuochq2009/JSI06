@@ -5,7 +5,7 @@ function displayOrders() {
   ordersContainer.innerHTML = "Loading...";
 
   db.collection("orders")
-    .orderBy("createdAt", "desc") // Sort by newest first
+    .orderBy("createdAt", "desc")
     .get()
     .then((querySnapshot) => {
       if (querySnapshot.empty) {
@@ -13,12 +13,18 @@ function displayOrders() {
         return;
       }
       ordersContainer.innerHTML = "";
+
+      // Lưu promise cho từng đơn hàng
+      const orderPromises = [];
+
       querySnapshot.forEach((doc) => {
         const orderData = doc.data();
         let totalPrice = 0;
-        let gamesHtml = "";
+        const gameIds = orderData.games || [];
+        const gameHtmlArr = new Array(gameIds.length);
 
-        const gamePromises = (orderData.games || []).map((gameId) => {
+        // Lấy thông tin từng game đúng thứ tự
+        const gamePromises = gameIds.map((gameId, idx) => {
           return db
             .collection("products")
             .doc(gameId)
@@ -27,45 +33,50 @@ function displayOrders() {
               if (gameDoc.exists) {
                 const gameData = gameDoc.data();
                 totalPrice += parseFloat(gameData.price) || 0;
-                gamesHtml += ` 
-                        <div class="result">           
-                            <div class="result-game">
-                              <div>
-                                <img class="result-img" src="${
-                                  gameData.image || ""
-                                }" alt="Image not found">
-                              </div>
-                              <div class="result-text">
-                                <h4>${gameData.name}</h3>
-                                <p>Tags: ${
-                                  gameData.tags || "No tags available"
-                                }</p>
-                                <p>${gameData.releaseDate || ""}</p>
-                              </div>
-                              <div class="result-price">
-                                <p>Price: $${gameData.price || "0.00"}</p>
-                              </div>
-                            </div>
-                          </a>
-                        </div>
-                      `;
+                gameHtmlArr[idx] = `
+                  <div class="result">
+                    <div class="result-game">
+                      <div>
+                        <img class="result-img" src="${gameData.image || ""}" alt="Image not found">
+                      </div>
+                      <div class="result-text">
+                        <h4>${gameData.name}</h4>
+                        <p>Tags: ${gameData.tags || "No tags available"}</p>
+                        <p>${gameData.releaseDate || ""}</p>
+                      </div>
+                      <div class="result-price">
+                        <p>Price: $${gameData.price || "0.00"}</p>
+                      </div>
+                    </div>
+                  </div>
+                `;
+              } else {
+                gameHtmlArr[idx] = `<div class="result"><p>Game not found (ID: ${gameId})</p></div>`;
               }
             });
         });
 
-        Promise.all(gamePromises).then(() => {
-          ordersContainer.innerHTML += `
-                        <h4>User Email: ${orderData.email}</h3>
-                        ${gamesHtml}
-                        <p>Total Price: $${totalPrice.toFixed(2)}</p>
-                        <p>Order Date: ${
-                          orderData.createdAt && orderData.createdAt.toDate
-                            ? orderData.createdAt.toDate().toLocaleString()
-                            : "N/A"
-                        } 
-                        <hr>
-                    `;
-        });
+        // Lưu promise của đơn hàng này
+        orderPromises.push(
+          Promise.all(gamePromises).then(() => {
+            return `
+              <h4>User Email: ${orderData.email}</h4>
+              ${gameHtmlArr.join("")}
+              <p>Total Price: $${totalPrice.toFixed(2)}</p>
+              <p>Order Date: ${
+                orderData.createdAt && orderData.createdAt.toDate
+                  ? orderData.createdAt.toDate().toLocaleString()
+                  : "N/A"
+              }</p>
+              <hr>
+            `;
+          })
+        );
+      });
+
+      // Khi tất cả đơn hàng đã xong, render ra 1 lần
+      Promise.all(orderPromises).then((ordersHtmlArr) => {
+        ordersContainer.innerHTML = ordersHtmlArr.join("");
       });
     })
     .catch((error) => {
