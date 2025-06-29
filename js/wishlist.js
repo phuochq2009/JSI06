@@ -11,55 +11,63 @@ function getUserName() {
     const userName = localStorage.getItem("userName");
     return userName;
   }
-
-function displayWishlist() {
+async function displayWishlist() {
     const wishlistContainer = document.getElementById('wishlistContainer');
     wishlistContainer.innerHTML = '';
 
-    const userName = getUserName();
-  let wishlistKey = `wishlist-${userName}`;
-  let wishlistLocalStorage = localStorage.getItem(wishlistKey) || [];
-  
-
-    if (wishlistLocalStorage.length === 0) {
-        wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
-        return;
+    firebase.auth().onAuthStateChanged(async function (user) {
+    if (!user) {
+      alert("Please login to add game to wishlist");
+      return;
     }
 
-    const wishlist = JSON.parse(wishlistLocalStorage);
+    // Get wishlist from Firestore
+    try {
+        const userDoc = await db.collection("users").where("email", "==", user.email).get();
+        if (userDoc.empty) {
+            wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
+            return;
+        }
+        const userData = userDoc.docs[0].data();
+        const wishlist = userData.wishlist || [];
 
-    wishlist.forEach(async (gameId) => {
-        const game = await fetchGameDetails(gameId);
+        if (wishlist.length === 0) {
+            wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
+            return;
+        }
 
-        const gameElement = document.createElement('div');
-        gameElement.classList.add('wishlist-game');
-        gameElement.innerHTML = ` 
-        <div class="result">           
-                    <a class="left" href="./detail.html?id=${game.id}" target="_blank" style="text-decoration: none;">
-                        <div class="result-game">
-                            <div class="">
-                                <img class="result-img" src="${game.background_image}" alt="Image not found">
+        for (const gameId of wishlist) {
+            const game = await fetchGameDetails(gameId);
+
+            const gameElement = document.createElement('div');
+            gameElement.classList.add('wishlist-game');
+            gameElement.innerHTML = ` 
+            <div class="result">           
+                        <a class="left" href="./detail.html?id=${game.id}" target="_blank" style="text-decoration: none;">
+                            <div class="result-game">
+                                <div class="">
+                                    <img class="result-img" src="${game.background_image}" alt="Image not found">
+                                </div>
+                                <div class="result-text">
+                                    <h3>${game.name}</h3>
+                                
+                                    <p>Tags: ${game.tags.map(tag => tag.name).slice(0, 5).join(', ') || 'No tags available'}</p>
+                                
+                                    <p>${game.released}</p>
+                                </div>
                             </div>
-                            <div class="result-text">
-                                <h3>${game.name}</h3>
-                            
-                                <p>Tags: ${game.tags.map(tag => tag.name).slice(0, 5).join(', ') || 'No tags available'}</p>
-                            
-                                <p>${game.released}</p>
+                        </a>
+                        <button class="remove-btn btn btn-danger" onclick="removeFromWishlist(${game.id})">Remove</button>
+            </div>
+                        `;
 
-
-                            </div>
-                            
-                        </div>
-
-                    </a>
-                                            <button class="remove-btn btn btn-danger" onclick="removeFromWishlist(${game.id})">Remove</button>
-
-        </div>
-                    `;
-
-        wishlistContainer.appendChild(gameElement);
-    });
+            wishlistContainer.appendChild(gameElement);
+        }
+    } catch (error) {
+        wishlistContainer.innerHTML = '<p>Error loading wishlist.</p>';
+        console.error(error);
+    }
+})
 }
 
 function removeFromWishlist(gameId) {
