@@ -149,12 +149,12 @@ function addCart() {
                 if (!querySnapshot.empty) {
                     const userDocId = querySnapshot.docs[0].id;
                     const userData = querySnapshot.docs[0].data();
-                    // Check in cart
+                    
                     if (userData.cart && userData.cart.includes(id)) {
                         alert("This game is already in your cart.");
                         return;
                     }
-                    // Check in history (assume history is an array of ids)
+                    
                     if (userData.history && userData.history.includes(id)) {
                         alert("This game is already in your history.");
                         return;

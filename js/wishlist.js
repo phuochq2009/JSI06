@@ -21,7 +21,7 @@ async function displayWishlist() {
       return;
     }
 
-    // Get wishlist from Firestore
+    
     try {
         const userDoc = await db.collection("users").where("email", "==", user.email).get();
         if (userDoc.empty) {
@@ -90,7 +90,7 @@ function removeFromWishlist(gameId) {
                 wishlist: updatedWishlist
             });
             alert("Game removed from wishlist successfully.");
-            displayWishlist(); // Refresh the wishlist display
+            displayWishlist(); 
         } catch (error) {
             console.error("Error removing game from wishlist:", error);
             alert("Error removing game from wishlist.");

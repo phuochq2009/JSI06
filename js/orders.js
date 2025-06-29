@@ -14,7 +14,7 @@ function displayOrders() {
       }
       ordersContainer.innerHTML = "";
 
-      // Lưu promise cho từng đơn hàng
+      
       const orderPromises = [];
 
       querySnapshot.forEach((doc) => {
@@ -23,7 +23,7 @@ function displayOrders() {
         const gameIds = orderData.games || [];
         const gameHtmlArr = new Array(gameIds.length);
 
-        // Lấy thông tin từng game đúng thứ tự
+        
         const gamePromises = gameIds.map((gameId, idx) => {
           return db
             .collection("products")
@@ -56,7 +56,7 @@ function displayOrders() {
             });
         });
 
-        // Lưu promise của đơn hàng này
+        
         orderPromises.push(
           Promise.all(gamePromises).then(() => {
             return `
@@ -74,7 +74,6 @@ function displayOrders() {
         );
       });
 
-      // Khi tất cả đơn hàng đã xong, render ra 1 lần
       Promise.all(orderPromises).then((ordersHtmlArr) => {
         ordersContainer.innerHTML = ordersHtmlArr.join("");
       });
@@ -95,13 +94,13 @@ function displayBuyChart() {
       if (doc.exists) {
         const data = doc.data();
 
-        // Sort by largest value
+        
         const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
         const nameList = entries.map(([name]) => name);
         const valueList = entries.map(([, value]) => value);
         
         const buyChart = document.getElementById("buyChartContainer").getContext("2d");
-        buyChartContainer.innerHTML = ""; // Clear loading text
+        buyChartContainer.innerHTML = ""; 
         const length = nameList.length;
         const colors = [];
         for (let i = 0; i < length; i++) {
@@ -181,12 +180,12 @@ function logout() {
     .auth()
     .signOut()
     .then(() => {
-      // Sign-out successful.
+      
       console.log("Sign-out successful.");
       alert("You have signed out successfully!");
     })
     .catch((error) => {
-      // An error happened.
+      
       console.log("An error happened:", error);
       alert("Error during sign out: " + error.message);
     });

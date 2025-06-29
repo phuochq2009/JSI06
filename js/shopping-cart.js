@@ -135,14 +135,14 @@ function checkOut() {
                   alert("Your cart is empty. Please add items to your cart before checking out.");
                   return;
                 }
-                // Thêm hitory
+                //  hitory
                 db.collection("users")
                   .doc(userDocId)
                   .update({
                     history: firebase.firestore.FieldValue.arrayUnion(...gamesIdList),
                   })
                   .then(() => {
-                    // Thêm orders 
+                    // orders 
                     db.collection("orders")
                       .doc(user.email)
                       .set(
@@ -154,7 +154,7 @@ function checkOut() {
                         { merge: true }
                       )
                       .then(() => {
-                        // Xóa cart 
+                        // cart 
                         db.collection("users")
                           .doc(userDocId)
                           .update({
@@ -170,7 +170,7 @@ function checkOut() {
                                 const game = doc.data();
                                 const gName = game.name || "Unknown Game";
                                 const historyDocRef = db.collection("history").doc("purchase data");
-                                // Use transaction to safely increment the field
+                                
                                 db.runTransaction((transaction) => {
                                   return transaction.get(historyDocRef).then((historyDoc) => {
                                   const data = historyDoc.exists ? historyDoc.data() : {};
