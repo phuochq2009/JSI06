@@ -5,6 +5,7 @@ function displayOrders() {
   ordersContainer.innerHTML = "Loading...";
 
   db.collection("orders")
+    .orderBy("createdAt", "desc") // Sort by newest first
     .get()
     .then((querySnapshot) => {
       if (querySnapshot.empty) {
@@ -83,12 +84,15 @@ function displayBuyChart() {
       if (doc.exists) {
         const data = doc.data();
 
+        // Sort by largest value
+        const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
+        const nameList = entries.map(([name]) => name);
+        const valueList = entries.map(([, value]) => value);
+        
         const buyChart = document.getElementById("buyChartContainer").getContext("2d");
         buyChartContainer.innerHTML = ""; // Clear loading text
-        const nameList = Object.keys(data);
-        const valueList = Object.values(data);
         const length = nameList.length;
-        colors = [];
+        const colors = [];
         for (let i = 0; i < length; i++) {
           colors.push(dynamicColors());
         }
