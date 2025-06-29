@@ -71,16 +71,31 @@ async function displayWishlist() {
 }
 
 function removeFromWishlist(gameId) {
-    const userName = getUserName();
-  let wishlistKey = `wishlist-${userName}`;
-  let wishlist = JSON.parse(localStorage.getItem(wishlistKey)) || [];
-  
-    let removeIndex = wishlist.findIndex((item) => item === gameId);
-    wishlist.splice(removeIndex, 1);
+    firebase.auth().onAuthStateChanged(async function (user) {
+        if (!user) {
+            alert("Please login to remove game from wishlist");
+            return;
+        }
+        try {
+            const userDoc = await db.collection("users").where("email", "==", user.email).get();
+            if (userDoc.empty) {
+                alert("User not found.");
+                return;
+            }
+            const userData = userDoc.docs[0];
+            const wishlist = userData.data().wishlist || [];
+            const updatedWishlist = wishlist.filter(id => String(id) !== String(gameId));
 
-    console.log(wishlist);
-    localStorage.setItem(wishlistKey, JSON.stringify(wishlist));
-    displayWishlist();
+            await db.collection("users").doc(userData.id).update({
+                wishlist: updatedWishlist
+            });
+            alert("Game removed from wishlist successfully.");
+            displayWishlist(); // Refresh the wishlist display
+        } catch (error) {
+            console.error("Error removing game from wishlist:", error);
+            alert("Error removing game from wishlist.");
+        }
+    });
 }
 
 document.addEventListener('DOMContentLoaded', displayWishlist);
