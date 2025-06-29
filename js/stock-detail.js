@@ -191,12 +191,14 @@ document.getElementById("commentForm").addEventListener("submit", comment);
         const commentText = document.getElementById("comment").value;
         const commendation = document.getElementsByName("recommendation");
         let selectedCommendation = "";
-        for (const commend of commendation) {
-            if (commend.checked) {
-                selectedCommendation = commend.value;
-                break;
-            }
-            if (!selectedCommendation) {
+        if (commendation[0].checked) {
+            selectedCommendation = "recommended";
+        }
+        else if (commendation[1].checked) {
+            selectedCommendation = "not-recommended";
+        }
+        else {
+            if (!selectedCommendation) {    
             alert("Please select a commendation.");
             return;
         }  
@@ -222,6 +224,7 @@ document.getElementById("commentForm").addEventListener("submit", comment);
                             username: username,
                             comment: commentText,
                             commendation: selectedCommendation,
+                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
                         })
                         .then(() => {
                             alert("Comment added successfully!");
@@ -263,6 +266,11 @@ document.getElementById("commentForm").addEventListener("submit", comment);
                     <div class="comment">
                         <h3 class="commendation">${commentData.commendation}</h3>
                         <h3>by ${commentData.username}</h3>
+                        <p class="timestamp">"Comment in: "${
+                          commentData.timestamp && commentData.timestamp.toDate
+                            ? commentData.timestamp.toDate().toLocaleString()
+                            : "N/A"
+                        } </p>
                         <p>${commentData.comment}</p>
                     </div>
                     `;
