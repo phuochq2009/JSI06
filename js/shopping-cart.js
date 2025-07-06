@@ -223,46 +223,7 @@ function checkOut() {
 }
 
 
-function checkLoginStatus() {
-  const textt = document.getElementById("textt");
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (user) {
-      db.collection("users")
-        .where("email", "==", user.email)
-        .get()
-        .then((querySnapshot) => {
-          if (!querySnapshot.empty) {
-            const userData = querySnapshot.docs[0].data();
-            textt.innerHTML = `
-                        <div class="dropdown">
-                            <p class="nav-link">
-                                ${userData.username} <i class="fa-solid fa-caret-down">
-                                    <button class="drop-content" onclick="logout()">Log Out</button>
-                                </i>
-                            </p>
-                        </div>
-                    `;
-          } else {
-            textt.innerHTML = `
-                        <div class="dropdown">
-                            <p class="nav-link">
-                                ${user.email} <i class="fa-solid fa-caret-down">
-                                    <button class="drop-content" onclick="logout()">Log Out</button>
-                                </i>
-                            </p>
-                        </div>
-                    `;
-          }
-        })
-        .catch((error) => {
-          console.log("Error getting documents: ", error);
-          textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
-        });
-    } else {
-      textt.innerHTML = `<a class="nav-link" href="login.html">Log in</a>`;
-    }
-  });
-}
+
 
 function displayHistory() {
   const historyContainer = document.getElementById("historyContainer");
@@ -333,7 +294,6 @@ function displayHistory() {
 
 
 
-checkLoginStatus();
 displayHistory();
 displayWishlist();
 
