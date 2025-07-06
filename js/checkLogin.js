@@ -18,3 +18,21 @@ function checkLoginStatus() {
 }
 
 checkLoginStatus();
+
+function logout() {
+  firebase
+    .auth()
+    .signOut()
+    .then(() => {
+      // Sign-out successful.
+      localStorage.removeItem("email");
+      localStorage.removeItem("username");
+      localStorage.setItem("isLogin", false);
+      alert("You have signed out successfully!");
+    })
+    .catch((error) => {
+      // An error happened.
+      console.log("An error happened:", error);
+      alert("Error during sign out: " + error.message);
+    });
+}

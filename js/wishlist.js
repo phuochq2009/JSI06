@@ -15,15 +15,14 @@ async function displayWishlist() {
     const wishlistContainer = document.getElementById('wishlistContainer');
     wishlistContainer.innerHTML = '';
 
-    firebase.auth().onAuthStateChanged(async function (user) {
-    if (!user) {
-      alert("Please login to add game to wishlist");
-      return;
+    const email = localStorage.getItem("email");
+    if (!email) {
+        alert("Please login to view your wishlist");
+        return;
     }
 
-    
     try {
-        const userDoc = await db.collection("users").where("email", "==", user.email).get();
+        const userDoc = await db.collection("users").where("email", "==", email).get();
         if (userDoc.empty) {
             wishlistContainer.innerHTML = '<p>Your wishlist is empty.</p>';
             return;
@@ -67,49 +66,36 @@ async function displayWishlist() {
         wishlistContainer.innerHTML = '<p>Error loading wishlist.</p>';
         console.error(error);
     }
-})
 }
 
 function removeFromWishlist(gameId) {
-    firebase.auth().onAuthStateChanged(async function (user) {
-        if (!user) {
-            alert("Please login to remove game from wishlist");
-            return;
-        }
-        try {
-            const userDoc = await db.collection("users").where("email", "==", user.email).get();
-            if (userDoc.empty) {
+    const email = localStorage.getItem("email");
+    if (!email) {
+        alert("Please login to remove game from wishlist");
+        return;
+    }
+    db.collection("users").where("email", "==", email).get()
+        .then(querySnapshot => {
+            if (querySnapshot.empty) {
                 alert("User not found.");
                 return;
             }
-            const userData = userDoc.docs[0];
+            const userData = querySnapshot.docs[0];
             const wishlist = userData.data().wishlist || [];
             const updatedWishlist = wishlist.filter(id => String(id) !== String(gameId));
 
-            await db.collection("users").doc(userData.id).update({
+            return db.collection("users").doc(userData.id).update({
                 wishlist: updatedWishlist
             });
+        })
+        .then(() => {
             alert("Game removed from wishlist successfully.");
-            displayWishlist(); 
-        } catch (error) {
+            displayWishlist();
+        })
+        .catch(error => {
             console.error("Error removing game from wishlist:", error);
             alert("Error removing game from wishlist.");
-        }
-    });
+        });
 }
 
 document.addEventListener('DOMContentLoaded', displayWishlist);
-
-
-  
-  function logout() {
-    firebase.auth().signOut().then(() => {
-        // Sign-out successful.
-        console.log("Sign-out successful.");
-        alert("You have signed out successfully!");
-    }).catch((error) => {
-        // An error happened.
-        console.log("An error happened:", error);
-        alert("Error during sign out: " + error.message);
-    });
-  }

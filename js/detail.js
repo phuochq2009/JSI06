@@ -139,21 +139,7 @@ fetchGameDetails();
 
 
 
-function logout() {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      // Sign-out successful.
-      console.log("Sign-out successful.");
-      alert("You have signed out successfully!");
-    })
-    .catch((error) => {
-      // An error happened.
-      console.log("An error happened:", error);
-      alert("Error during sign out: " + error.message);
-    });
-}
+
 
 function getUserName() {
   const userName = localStorage.getItem("userName");
@@ -161,43 +147,42 @@ function getUserName() {
 }
 
 function addWish() {
-  firebase.auth().onAuthStateChanged(function (user) {
-    if (!user) {
-      alert("Please login to add game to wishlist");
-      return;
-    }
+  const email = localStorage.getItem("email");
+  if (!email) {
+    alert("Please login to add game to wishlist");
+    return;
+  }
 
-    db.collection("users")
-      .where("email", "==", user.email)
-      .get()
-      .then((querySnapshot) => {
-        if (querySnapshot.empty) {
-          alert("User not found in database.");
-          return;
-        }
-        const userDoc = querySnapshot.docs[0];
-        const userData = userDoc.data();
-        let wishlist = Array.isArray(userData.wishlist)
-          ? userData.wishlist
-          : [];
-        if (wishlist.includes(id)) {
-          alert("Game already in wishlist");
-          return;
-        }
-        wishlist.push(id);
-        userDoc.ref
-          .update({ wishlist })
-          .then(() => {
-            alert("Game added to wishlist");
-          })
-          .catch((error) => {
-            console.error("Error updating wishlist: ", error);
-            alert("Failed to add game to wishlist");
-          });
-      })
-      .catch((error) => {
-        console.error("Error finding user: ", error);
-        alert("Failed to add game to wishlist");
-      });
-  });
+  db.collection("users")
+    .where("email", "==", email)
+    .get()
+    .then((querySnapshot) => {
+      if (querySnapshot.empty) {
+        alert("User not found in database.");
+        return;
+      }
+      const userDoc = querySnapshot.docs[0];
+      const userData = userDoc.data();
+      let wishlist = Array.isArray(userData.wishlist)
+        ? userData.wishlist
+        : [];
+      if (wishlist.includes(id)) {
+        alert("Game already in wishlist");
+        return;
+      }
+      wishlist.push(id);
+      userDoc.ref
+        .update({ wishlist })
+        .then(() => {
+          alert("Game added to wishlist");
+        })
+        .catch((error) => {
+          console.error("Error updating wishlist: ", error);
+          alert("Failed to add game to wishlist");
+        });
+    })
+    .catch((error) => {
+      console.error("Error finding user: ", error);
+      alert("Failed to add game to wishlist");
+    });
 }

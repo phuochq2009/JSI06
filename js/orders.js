@@ -135,21 +135,6 @@ function displayBuyChart() {
 displayBuyChart();
 
 
-function logout() {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      
-      console.log("Sign-out successful.");
-      alert("You have signed out successfully!");
-    })
-    .catch((error) => {
-      
-      console.log("An error happened:", error);
-      alert("Error during sign out: " + error.message);
-    });
-}
 
 
 

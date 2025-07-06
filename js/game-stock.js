@@ -87,20 +87,3 @@ function searchGames() {
     });
 }
 
-
-
-function logout() {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      // Sign-out successful.
-      console.log("Sign-out successful.");
-      alert("You have signed out successfully!");
-    })
-    .catch((error) => {
-      // An error happened.
-      console.log("An error happened:", error);
-      alert("Error during sign out: " + error.message);
-    });
-}

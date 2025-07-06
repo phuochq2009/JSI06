@@ -80,63 +80,49 @@ displayGameDetail(id);
 
 
   
-  function logout() {
-    firebase.auth().signOut().then(() => {
-        // Sign-out successful.
-        console.log("Sign-out successful.");
-        alert("You have signed out successfully!");
-    }).catch((error) => {
-        // An error happened.
-        console.log("An error happened:", error);
-        alert("Error during sign out: " + error.message);
-    });
-  }
-
 
 
 function addCart() {
-    firebase.auth().onAuthStateChanged(function(user) {
-        if (user) {
-            db.collection("users").where("email", "==", user.email)
-            .get()
-            .then((querySnapshot) => {
-                if (!querySnapshot.empty) {
-                    const userDocId = querySnapshot.docs[0].id;
-                    const userData = querySnapshot.docs[0].data();
-                    
-                    if (userData.cart && userData.cart.includes(id)) {
-                        alert("This game is already in your cart.");
-                        return;
-                    }
-                    
-                    if (userData.history && userData.history.includes(id)) {
-                        alert("This game is already in your history.");
-                        return;
-                    }
-                    
-                    db.collection("users").doc(userDocId).update({
-                        cart: firebase.firestore.FieldValue.arrayUnion(id)
-                    })
-                    .then(() => {
-                        alert("Game added to cart successfully!");
-                    })
-                    .catch((error) => {
-                        console.error("Error adding game to cart: ", error);
-                        alert("Error adding game to cart: " + error.message);
-                    });
-                } else {
-                    alert("User not found in database.");
+    const email = localStorage.getItem("email");
+    if (!email) {
+        alert("Please login to add game to cart");
+        return;
+    }
+    db.collection("users").where("email", "==", email)
+        .get()
+        .then((querySnapshot) => {
+            if (!querySnapshot.empty) {
+                const userDocId = querySnapshot.docs[0].id;
+                const userData = querySnapshot.docs[0].data();
+
+                if (userData.cart && userData.cart.includes(id)) {
+                    alert("This game is already in your cart.");
+                    return;
                 }
-            })
-            .catch((error) => {
-                console.error("Error finding user: ", error);
-                alert("Error finding user: " + error.message);
-            });
-        } else {
-            alert("Please login to add game to cart");
-            return;
-        }
-    });
+
+                if (userData.history && userData.history.includes(id)) {
+                    alert("This game is already in your history.");
+                    return;
+                }
+
+                db.collection("users").doc(userDocId).update({
+                    cart: firebase.firestore.FieldValue.arrayUnion(id)
+                })
+                .then(() => {
+                    alert("Game added to cart successfully!");
+                })
+                .catch((error) => {
+                    console.error("Error adding game to cart: ", error);
+                    alert("Error adding game to cart: " + error.message);
+                });
+            } else {
+                alert("User not found in database.");
+            }
+        })
+        .catch((error) => {
+            console.error("Error finding user: ", error);
+            alert("Error finding user: " + error.message);
+        });
 }
 document.getElementById("commentForm").addEventListener("submit", comment);
 

@@ -51,11 +51,11 @@ function login(event) {
                 if (userCredential.user.email === "admin2k9@gmail.com") {
                   setTimeout(() => {
                     location.href = "admin.html";
-                  }, 2000);
+                  }, 1000);
                 } else {
                   setTimeout(() => {
                     location.href = "index.html";
-                  }, 2000);
+                  }, 1000);
                 }
               }
             })
@@ -76,20 +76,3 @@ function login(event) {
     });
 }
 
-
-
-function logout() {
-  firebase
-    .auth()
-    .signOut()
-    .then(() => {
-      // Sign-out successful.
-      console.log("Sign-out successful.");
-      alert("You have signed out successfully!");
-    })
-    .catch((error) => {
-      // An error happened.
-      console.log("An error happened:", error);
-      alert("Error during sign out: " + error.message);
-    });
-}
