@@ -84,3 +84,6 @@ body {
     bottom: 30%;
     
 }
+.body{
+    min-height: 400px;
+}

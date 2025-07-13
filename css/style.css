@@ -160,3 +160,6 @@ body {
 .dropdown p{
     margin:0;
 }
+.body{
+    min-height: 400px;
+}
