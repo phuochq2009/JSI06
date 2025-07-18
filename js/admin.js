@@ -112,16 +112,70 @@ displayProducts();
 
 function deleteProduct(id) {
   if (confirm("Are you sure you want to delete this product?")) {
-    db.collection("products")
-      .doc(id)
-      .delete()
-      .then(() => {
-        alert("Product deleted!");
-        displayProducts();
-      })
-      .catch((error) => {
-        alert("Error deleting product: " + error.message);
+    // Delete the product id from users' history
+    db.collection("users").get().then((usersSnapshot) => {
+      const userUpdates = [];
+      usersSnapshot.forEach((userDoc) => {
+        userUpdates.push(
+          db.collection("users").doc(userDoc.id).update({
+            [`history.${id}`]: firebase.firestore.FieldValue.delete(),
+            cart: firebase.firestore.FieldValue.arrayRemove(id)
+          })
+        );
       });
+      return Promise.all(userUpdates);
+    })
+    .then(() => {
+      // Delete all comments id
+      return db.collection("comments").where("gameId", "==", id).get();
+    })
+    .then((commentsSnapshot) => {
+      const commentDeletes = [];
+      commentsSnapshot.forEach((commentDoc) => {
+        commentDeletes.push(db.collection("comments").doc(commentDoc.id).delete());
+      });
+      return Promise.all(commentDeletes);
+    })
+    .then(() => {
+      // Delete the product id from users' orders
+      return db.collection("orders").get();
+    })
+    .then((ordersSnapshot) => {
+      const orderUpdates = [];
+      ordersSnapshot.forEach((orderDoc) => {
+        orderUpdates.push(
+          db.collection("orders").doc(orderDoc.id).update({
+            games: firebase.firestore.FieldValue.arrayRemove(id)
+          })
+        );
+      });
+      return Promise.all(orderUpdates);
+    })
+    .then(() => {
+      // Delete the product name from history.purchase
+      return db.collection("products").doc(id).get();
+    })
+    .then((doc) => {
+      if (doc.exists) {
+        const gameName = doc.data().name;
+        console.log("Deleting game from history:", gameName);
+        return db.collection("history").doc("purchase data").update({
+          [gameName]: firebase.firestore.FieldValue.delete(),
+        });
+      }
+      return Promise.resolve();
+    })
+    .then(() => {
+      // Delete the product
+      return db.collection("products").doc(id).delete();
+    })
+    .then(() => {
+      console.log("Document successfully deleted!");
+      displayProducts();
+    })
+    .catch((error) => {
+      alert("Error deleting product: " + error.message);
+    });
   }
 }
 
