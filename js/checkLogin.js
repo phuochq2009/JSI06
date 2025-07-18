@@ -29,6 +29,7 @@ function logout() {
       localStorage.removeItem("username");
       localStorage.setItem("isLogin", false);
       alert("You have signed out successfully!");
+      window.location.reload();
     })
     .catch((error) => {
       // An error happened.
