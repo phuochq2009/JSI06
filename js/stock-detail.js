@@ -5,7 +5,8 @@ function displayGameDetail(id) {
     .get()
     .then((doc) => {
       if (!doc.exists) {
-        document.getElementById("firstDetail").innerHTML = "<p>Game not found.</p>";
+        document.getElementById("firstDetail").innerHTML =
+          "<p>Game not found.</p>";
         return;
       }
       const game = doc.data();
@@ -69,142 +70,122 @@ function displayGameDetail(id) {
       `;
     })
     .catch((error) => {
-      document.getElementById("firstDetail").innerHTML = "<p>Error loading game: " + error.message + "</p>";
+      document.getElementById("firstDetail").innerHTML =
+        "<p>Error loading game: " + error.message + "</p>";
     });
 }
 
 displayGameDetail(id);
 
-
-
-
-
-  
-
-
 function addCart() {
-    const email = localStorage.getItem("email");
-    if (!email) {
-        alert("Please login to add game to cart");
-        return;
-    }
-    db.collection("users").where("email", "==", email)
-        .get()
-        .then((querySnapshot) => {
-            if (!querySnapshot.empty) {
-                const userDocId = querySnapshot.docs[0].id;
-                const userData = querySnapshot.docs[0].data();
+  const email = localStorage.getItem("email");
+  if (!email) {
+    alert("Please login to add game to cart");
+    return;
+  }
+  db.collection("users")
+    .where("email", "==", email)
+    .get()
+    .then((querySnapshot) => {
+      if (!querySnapshot.empty) {
+        const userDocId = querySnapshot.docs[0].id;
+        const userData = querySnapshot.docs[0].data();
 
-                if (userData.cart && userData.cart.includes(id)) {
-                    alert("This game is already in your cart.");
-                    return;
-                }
+        if (userData.cart && userData.cart.includes(id)) {
+          alert("This game is already in your cart.");
+          return;
+        }
 
-                if (userData.history && userData.history.includes(id)) {
-                    alert("This game is already in your history.");
-                    return;
-                }
+        if (userData.history && userData.history.includes(id)) {
+          alert("This game is already in your history.");
+          return;
+        }
 
-                db.collection("users").doc(userDocId).update({
-                    cart: firebase.firestore.FieldValue.arrayUnion(id)
-                })
-                .then(() => {
-                    alert("Game added to cart successfully!");
-                })
-                .catch((error) => {
-                    console.error("Error adding game to cart: ", error);
-                    alert("Error adding game to cart: " + error.message);
-                });
-            } else {
-                alert("User not found in database.");
-            }
-        })
-        .catch((error) => {
-            console.error("Error finding user: ", error);
-            alert("Error finding user: " + error.message);
-        });
+        db.collection("users")
+          .doc(userDocId)
+          .update({
+            cart: firebase.firestore.FieldValue.arrayUnion(id),
+          })
+          .then(() => {
+            alert("Game added to cart successfully!");
+          })
+          .catch((error) => {
+            console.error("Error adding game to cart: ", error);
+            alert("Error adding game to cart: " + error.message);
+          });
+      } else {
+        alert("User not found in database.");
+      }
+    })
+    .catch((error) => {
+      console.error("Error finding user: ", error);
+      alert("Error finding user: " + error.message);
+    });
 }
 document.getElementById("commentForm").addEventListener("submit", comment);
 
-    function comment(event) {
-        event.preventDefault();
-        const commentText = document.getElementById("comment").value;
-        const commendation = document.getElementsByName("recommendation");
-        let selectedCommendation = "";
-        if (commendation[0].checked) {
-            selectedCommendation = "recommended";
-        }
-        else if (commendation[1].checked) {
-            selectedCommendation = "not-recommended";
-        }
-        else {
-            if (!selectedCommendation) {    
-            alert("Please select a commendation.");
-            return;
-        }  
-        }
-        if (selectedCommendation === "recommended") {
-            selectedCommendation = "<i class='fas fa-thumbs-up'></i> Recommended";
-        } else if (selectedCommendation === "not-recommended") {
-            selectedCommendation = "<i class='fas fa-thumbs-down'></i> Not Recommended";
-        }                 
-        if (!commentText) {
-            alert("Please enter a comment.");
-            return;
-        }
-        firebase.auth().onAuthStateChanged(function(user) {
-            if (user) {
-                db.collection("users").where("email", "==", user.email)
-                .get()
-                .then((querySnapshot) => {
-                    if (!querySnapshot.empty) {
-                        const username = querySnapshot.docs[0].data().username;
-                        db.collection("comments").add({
-                            gameId: id,
-                            username: username,
-                            comment: commentText,
-                            commendation: selectedCommendation,
-                            timestamp: firebase.firestore.FieldValue.serverTimestamp(),
-                        })
-                        .then(() => {
-                            alert("Comment added successfully!");
-                            document.getElementById("comment").value = ""; 
-                            displayComments(); 
-                        })
-                        .catch((error) => {
-                            console.error("Error adding comment: ", error);
-                            alert("Error adding comment: " + error.message);
-                        });
-                    }
-                    else {
-                        alert("User not found in database.");
-                    }
-                })
-                .catch((error) => {
-                    console.error("Error finding user: ", error);
-                    alert("Error finding user: " + error.message);
-                });
-            } else {
-                alert("Please login to comment on this game.");
-                return;
-            }
-        })
+function comment(event) {
+  event.preventDefault();
+  const commentText = document.getElementById("comment").value;
+  const commendation = document.getElementsByName("recommendation");
+  let selectedCommendation = "";
+  if (commendation[0].checked) {
+    selectedCommendation = "recommended";
+  } else if (commendation[1].checked) {
+    selectedCommendation = "not-recommended";
+  } else {
+    if (!selectedCommendation) {
+      alert("Please select a commendation.");
+      return;
     }
-    function displayComments() {
-    db.collection("comments")
-      .where("gameId", "==", id)
-      .orderBy("timestamp", "desc") 
-      .get()
-      .then((querySnapshot) => {
-        const commentsContainer = document.getElementById("commentsContainer");
-        commentsContainer.innerHTML = "";
-        if (querySnapshot.empty) {
-            commentsContainer.innerHTML = "<p>No comments yet.</p>";
-            return;
-        }
-        querySnapshot.forEach((doc) => {
-            const commentData = doc.data();
-            commentsContainer.innerHTML += `
+  }
+  if (selectedCommendation === "recommended") {
+    selectedCommendation = "<i class='fas fa-thumbs-up'></i> Recommended";
+  } else if (selectedCommendation === "not-recommended") {
+    selectedCommendation = "<i class='fas fa-thumbs-down'></i> Not Recommended";
+  }
+  if (!commentText) {
+    alert("Please enter a comment.");
+    return;
+  }
+  const username = localStorage.getItem("username");
+  if (!username) {
+    alert("Please login to comment on this game.");
+    return;
+  }
+  db.collection("comments")
+    .add({
+      gameId: id,
+      username: username,
+      comment: commentText,
+      commendation: selectedCommendation,
+      timestamp: firebase.firestore.FieldValue.serverTimestamp(),
+    })
+    .then(() => {
+      alert("Comment added successfully!");
+      document.getElementById("comment").value = "";
+      displayComments();
+    })
+    .catch((error) => {
+      console.error("Error adding comment: ", error);
+      alert("Error adding comment: " + error.message);
+    });
+}
+function displayComments() {
+  db.collection("comments")
+    .where("gameId", "==", id)
+    .orderBy("timestamp", "desc")
+    .get()
+    .then((querySnapshot) => {
+      const commentsContainer = document.getElementById("commentsContainer");
+      commentsContainer.innerHTML = "";
+      if (querySnapshot.empty) {
+        commentsContainer.innerHTML = "<p>No comments yet.</p>";
+        return;
+      }
+      querySnapshot.forEach((doc) => {
+        const commentData = doc.data();
+        commentsContainer.innerHTML += `
                 <div class="comment">
                     <h3 class="commendation">${commentData.commendation}</h3>
                     <h3>by ${commentData.username}</h3>
@@ -216,12 +197,13 @@ document.getElementById("commentForm").addEventListener("submit", comment);
                     <p>${commentData.comment}</p>
                 </div>
             `;
-        });
-      })
-      .catch((error) => {
-        console.error("Error fetching comments: ", error);
-        const commentsContainer = document.getElementById("commentsContainer");
-        commentsContainer.innerHTML = "<p>Error loading comments: " + error.message + "</p>";
       });
+    })
+    .catch((error) => {
+      console.error("Error fetching comments: ", error);
+      const commentsContainer = document.getElementById("commentsContainer");
+      commentsContainer.innerHTML =
+        "<p>Error loading comments: " + error.message + "</p>";
+    });
 }
-    displayComments();
+displayComments();
