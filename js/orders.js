@@ -14,7 +14,6 @@ function displayOrders() {
       }
       ordersContainer.innerHTML = "";
 
-      
       const orderPromises = [];
 
       querySnapshot.forEach((doc) => {
@@ -23,7 +22,6 @@ function displayOrders() {
         const gameIds = orderData.games || [];
         const gameHtmlArr = new Array(gameIds.length);
 
-        
         const gamePromises = gameIds.map((gameId, idx) => {
           return db
             .collection("products")
@@ -37,7 +35,9 @@ function displayOrders() {
                   <div class="result">
                     <div class="result-game">
                       <div>
-                        <img class="result-img" src="${gameData.image || ""}" alt="Image not found">
+                        <img class="result-img" src="${
+                          gameData.image || ""
+                        }" alt="Image not found">
                       </div>
                       <div class="result-text">
                         <h4>${gameData.name}</h4>
@@ -51,12 +51,13 @@ function displayOrders() {
                   </div>
                 `;
               } else {
-                gameHtmlArr[idx] = `<div class="result"><p>Game not found (ID: ${gameId})</p></div>`;
+                gameHtmlArr[
+                  idx
+                ] = `<div class="result"><p>Game not found (ID: ${gameId})</p></div>`;
               }
             });
         });
 
-        
         orderPromises.push(
           Promise.all(gamePromises).then(() => {
             return `
@@ -94,13 +95,14 @@ function displayBuyChart() {
       if (doc.exists) {
         const data = doc.data();
 
-        
         const entries = Object.entries(data).sort((a, b) => b[1] - a[1]);
         const nameList = entries.map(([name]) => name);
         const valueList = entries.map(([, value]) => value);
-        
-        const buyChart = document.getElementById("buyChartContainer").getContext("2d");
-        buyChartContainer.innerHTML = ""; 
+
+        const buyChart = document
+          .getElementById("buyChartContainer")
+          .getContext("2d");
+        buyChartContainer.innerHTML = "";
         const length = nameList.length;
         const colors = [];
         for (let i = 0; i < length; i++) {
@@ -126,6 +128,29 @@ function displayBuyChart() {
                 beginAtZero: true,
               },
             },
+            plugins: {
+              legend: {
+                labels: {
+                  generateLabels: function (chart) {
+                    const dataset = chart.data.datasets[0];
+                    return [
+                      {
+                        text: dataset.label,
+                        fillStyle: "rgba(0,0,0,0)", 
+                        strokeStyle: "rgba(0,0,0,0)",
+                        lineWidth: 0,
+                        hidden: false,
+                        font: {
+                          size: 14,
+                        },
+                        fontColor: 'white',
+                        index: 0,
+                      },
+                    ];
+                  },
+                },
+              },
+            },
           },
         });
       }
@@ -134,13 +159,9 @@ function displayBuyChart() {
 
 displayBuyChart();
 
-
-
-
-
 function dynamicColors() {
-    var r = Math.floor(Math.random() * 255);
-    var g = Math.floor(Math.random() * 255);
-    var b = Math.floor(Math.random() * 255);
-    return "rgba(" + r + "," + g + "," + b + ", 0.5)";
+  var r = Math.floor(Math.random() * 255);
+  var g = Math.floor(Math.random() * 255);
+  var b = Math.floor(Math.random() * 255);
+  return "rgba(" + r + "," + g + "," + b + ", 0.5)";
 }
